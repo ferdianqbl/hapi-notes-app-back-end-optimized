@@ -1,6 +1,6 @@
 const { nanoid } = require("nanoid");
 
-class NoteServices {
+class NotesService {
   constructor() {
     this._notes = [];
   }
@@ -23,7 +23,9 @@ class NoteServices {
 
     const isSuccess = this._notes.filter((note) => note.id === id).length > 0;
 
-    if (!isSuccess) throw new Error("Note failed to be added");
+    if (!isSuccess) {
+      throw new Error("Catatan gagal ditambahkan");
+    }
 
     return id;
   }
@@ -33,36 +35,38 @@ class NoteServices {
   }
 
   getNoteById(id) {
-    const note = this._notes.filter((note) => note.id === id)[0];
-
-    if (!note) throw new Error("Note not found");
-
+    const note = this._notes.filter((n) => n.id === id)[0];
+    if (!note) {
+      throw new Error("Catatan tidak ditemukan");
+    }
     return note;
   }
 
   editNoteById(id, { title, body, tags }) {
-    const noteIdx = this._notes.findIndex((note) => note.id === id);
+    const index = this._notes.findIndex((note) => note.id === id);
 
-    if (noteIdx === -1) throw new Error("Note not found. Failed to edit");
+    if (index === -1) {
+      throw new Error("Gagal memperbarui catatan. Id tidak ditemukan");
+    }
 
-    const updateAt = new Date().toISOString();
+    const updatedAt = new Date().toISOString();
 
-    this._notes[noteIdx] = {
-      ...this._notes[noteIdx],
+    this._notes[index] = {
+      ...this._notes[index],
       title,
-      body,
       tags,
-      updateAt,
+      body,
+      updatedAt,
     };
   }
 
   deleteNoteById(id) {
-    const noteIdx = this._notes.findIndex((note) => note.id === id);
-
-    if (noteIdx === -1) throw new Error("Note not found. Failed to delete");
-
-    this._notes.splice(noteIdx, 1);
+    const index = this._notes.findIndex((note) => note.id === id);
+    if (index === -1) {
+      throw new Error("Catatan gagal dihapus. Id tidak ditemukan");
+    }
+    this._notes.splice(index, 1);
   }
 }
 
-module.exports = NoteServices;
+module.exports = NotesService;
